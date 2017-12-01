@@ -8,9 +8,8 @@ public class One {
     public One() {
         input = input+input.charAt(0);
         int sum = 0;
-        for (int i = 0; i < input.length(); i++) {
-            System.out.println(input.charAt(i));
-            if (i < input.length()-1 && input.charAt(i) == input.charAt(i+1)) {
+        for (int i = 0; i < input.length()-1; i++) {
+            if (input.charAt(i) == input.charAt(i+1)) {
                 sum += Integer.valueOf(input.charAt(i)-48);
             }
         }
