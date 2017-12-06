@@ -3,6 +3,8 @@
  */
 public class main {
     public static void main(String[] args) {
-        One one = new One();
+//        One one = new One();
+            Two two = new Two();
     }
+
 }
