@@ -1,6 +1,5 @@
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by giuseppeliguori on 01/12/2017.
@@ -25,8 +24,19 @@ public class Two {
             "3111\t2857\t2312\t3230\t149\t3082\t408\t1148\t2428\t134\t147\t620\t128\t157\t492\t2879";
 
     public Two() {
+        partOneBest(input);
         partOne(input);
         partTwo(input);
+    }
+
+    int sum = 0;
+    private void partOneBest(String input) {
+        Arrays.asList(input.split("\\n")).forEach(line -> {
+            List<Integer> integers = new ArrayList<>();
+            Arrays.asList(line.split("\\t")).forEach(number -> integers.add(Integer.valueOf(number)));
+            sum += (Collections.max(integers) - Collections.min(integers));
+        });
+        System.out.println("Two.partOne: [" + sum + "]");
     }
 
     private void partOne(String input) {
@@ -58,7 +68,6 @@ public class Two {
             sum += diff;
         }
         System.out.println("Two.partOne: [" + sum + "]");
-
     }
 
     private void partTwo(String input) {
