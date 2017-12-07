@@ -3,15 +3,12 @@
  */
 public class Three {
 
-    String input = "";
-
     public Three() {
-//        partOne(input);
-        partTwo(input);
+        partOne();
+        partTwo();
     }
 
-    private void partOne(String input) {
-
+    private void partOne() {
         int n = 366025;
         int value = 303;
         int v = 303 * 2 - 1;
@@ -53,10 +50,10 @@ public class Three {
     }
 
 
-    int rows = 5;
-    int cols = 5;
+    int rows = 11;
+    int cols = 11;
 
-    private void partTwo(String input) {
+    private void partTwo() {
 
         int[][] matrix = new int[rows][cols];
 
@@ -64,51 +61,41 @@ public class Three {
         int selectedRow = rows / 2;
         int selectedCol = cols / 2;
 
-        int value = 0;
+        matrix[selectedRow][selectedCol] = 1;
 
-        matrix[selectedRow][selectedCol] = ++value;
-
-        for (int i = 0; i < numberOfSquares; i++) {
+        for (int i = 0; i < numberOfSquares - 1; i++) {
 
             selectedCol++;
 
             int forN = 2 * i + 2;
 
             for (int j = 0; j < forN; j++) {
-                matrix[selectedRow][selectedCol] = ++value;
+                matrix[selectedRow][selectedCol] = getValueInMatrix3x3(matrix, selectedRow, selectedCol);
                 selectedRow--;
-
-//                printMatrix(matrix);
             }
 
             selectedCol--;
             selectedRow++;
 
             for (int j = 0; j < forN; j++) {
-                matrix[selectedRow][selectedCol] = ++value;
+                matrix[selectedRow][selectedCol] = getValueInMatrix3x3(matrix, selectedRow, selectedCol);
                 selectedCol--;
-
-//                printMatrix(matrix);
             }
 
             selectedCol++;
             selectedRow++;
 
             for (int j = 0; j < forN; j++) {
-                matrix[selectedRow][selectedCol] = ++value;
+                matrix[selectedRow][selectedCol] = getValueInMatrix3x3(matrix, selectedRow, selectedCol);
                 selectedRow++;
-
-//                printMatrix(matrix);
             }
 
             selectedCol++;
             selectedRow--;
 
             for (int j = 0; j < forN; j++) {
-                matrix[selectedRow][selectedCol] = ++value;
+                matrix[selectedRow][selectedCol] = getValueInMatrix3x3(matrix, selectedRow, selectedCol);
                 selectedCol++;
-
-//                printMatrix(matrix);
             }
 
             selectedCol--;
@@ -118,10 +105,37 @@ public class Three {
         printMatrix(matrix);
     }
 
+    private int getValueInMatrix3x3(int[][] matrix, int row, int col) {
+        row = row-1;
+        col = col-1;
+        int sum = 0;
+        for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 3; c++) {
+                try {
+                    sum += matrix[row+r][col+c];
+                } catch (IndexOutOfBoundsException e) {}
+            }
+        }
+
+        return sum;
+    }
+
+
     private void printMatrix(int[][] matrix) {
+        int val = 0;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                System.out.print(String.format(" %05d", matrix[r][c]));
+                System.out.print(String.format(" %07d", matrix[r][c]));
+                if (matrix[r][c] > 368078) {
+                    val = matrix[r][c];
+                    System.out.println("");
+                    System.out.println("*************");
+                    System.out.println("*************");
+                    System.out.println("****"+ val + "***");
+                    System.out.println("*************");
+                    System.out.println("*************");
+                    System.exit(1);
+                }
             }
             System.out.println("");
         }
