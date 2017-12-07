@@ -5,6 +5,9 @@ public class main {
     public static void main(String[] args) {
 //        One one = new One();
 //        Two two = new Two();
-        Three three = new Three();
+//        Three three = new Three();
+//        Four four = new Four();
+//        Five five = new Five();
+        Six six = new Six();
     }
 }
