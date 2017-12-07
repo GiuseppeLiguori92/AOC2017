@@ -53,47 +53,67 @@ public class Three {
     }
 
 
-    int rows = 7;
-    int cols = 7;
+    int rows = 5;
+    int cols = 5;
 
     private void partTwo(String input) {
 
         int[][] matrix = new int[rows][cols];
 
+        int numberOfSquares = rows / 2;
+        int selectedRow = rows / 2;
+        int selectedCol = cols / 2;
 
-        int startR = rows / 2;
-        int startC = cols / 2;
+        int value = 0;
 
+        matrix[selectedRow][selectedCol] = ++value;
 
-        matrix[startR][startC] = 1;
+        for (int i = 0; i < numberOfSquares; i++) {
 
-        matrix[startR][startC + 1] = 2;
+            selectedCol++;
 
-        matrix[startR - 1][startC + 1] = 3;
+            int forN = 2 * i + 2;
 
-        matrix[startR - 1][startC] = 4;
+            for (int j = 0; j < forN; j++) {
+                matrix[selectedRow][selectedCol] = ++value;
+                selectedRow--;
 
-        matrix[startR - 1][startC - 1] = 5;
-
-        matrix[startR][startC - 1] = 6;
-//
-        matrix[startR+1][startC - 1] = 7;
-
-        matrix[startR + 1][startC] = 8;
-//
-        matrix[startR + 1][startC + 1] = 9;
-//
-//        matrix[startR + 1][startC + 1] = 10;
-//
-        // 8    - 16   - 24 -
-        // 2ˆ3    2ˆ4   2ˆ5
-        for (int index = 1; index < 4; index++) {
-            matrix[startR + index][startC + index] = 8 * index + matrix[startR + index - 1][startC + index - 1];
-            for (int i = 0; i < 2; i++) {
-                matrix[startR + index][startC + index - i] = (int) (1 + Math.pow(2, 3*index)) - i;
+//                printMatrix(matrix);
             }
-        }
 
+            selectedCol--;
+            selectedRow++;
+
+            for (int j = 0; j < forN; j++) {
+                matrix[selectedRow][selectedCol] = ++value;
+                selectedCol--;
+
+//                printMatrix(matrix);
+            }
+
+            selectedCol++;
+            selectedRow++;
+
+            for (int j = 0; j < forN; j++) {
+                matrix[selectedRow][selectedCol] = ++value;
+                selectedRow++;
+
+//                printMatrix(matrix);
+            }
+
+            selectedCol++;
+            selectedRow--;
+
+            for (int j = 0; j < forN; j++) {
+                matrix[selectedRow][selectedCol] = ++value;
+                selectedCol++;
+
+//                printMatrix(matrix);
+            }
+
+            selectedCol--;
+
+        }
 
         printMatrix(matrix);
     }
@@ -101,9 +121,10 @@ public class Three {
     private void printMatrix(int[][] matrix) {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                System.out.print(String.format(" %02d", matrix[r][c]));
+                System.out.print(String.format(" %05d", matrix[r][c]));
             }
             System.out.println("");
         }
+        System.out.println("*************");
     }
 }
