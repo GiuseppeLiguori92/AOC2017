@@ -90,11 +90,10 @@ public class Six {
 
         Integer[] numbers = values.toArray(new Integer[values.size()]);
 
-        String originalLoop = "";
-
         boolean loopFound = false;
 
         int counter = 0;
+        List<String> results = new ArrayList<>();
         while (!loopFound) {
             int maxIndex = numbers.length;
             int max = 0;
@@ -106,6 +105,7 @@ public class Six {
             }
 
             int maxValue = max;
+            System.out.println("Six.partOne: " + maxIndex + " " + maxValue);
 
             int nextIndex = maxIndex + 1;
             int distributedBlock = 0;
@@ -131,22 +131,17 @@ public class Six {
                 currentResult += String.valueOf(numbers[i]);
             }
 
-            if (counter == 0) {
-                originalLoop = currentResult.toLowerCase();
-                counter++;
-                continue;
-            }
-
-            System.out.println("["+ counter +"] " + originalLoop + " == " + currentResult);
-
-            if (originalLoop.equals(currentResult)) {
-                System.out.println("Six.partTwo FOUND: " + counter);
-                loopFound = true;
-            }
-
             counter++;
+            for (String result : results) {
+                if (result.equals(currentResult)) {
+                    int steps = counter - results.indexOf(result) - 1;
+                    System.out.println("Six.partOne FOUND: " + counter + " " + steps);
+                    loopFound = true;
+                }
+            }
 
-            printArray(numbers);
+            results.add(currentResult.toString());
+
         }
     }
 

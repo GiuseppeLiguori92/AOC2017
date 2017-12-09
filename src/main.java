@@ -8,6 +8,8 @@ public class main {
 //        Three three = new Three();
 //        Four four = new Four();
 //        Five five = new Five();
-        Six six = new Six();
+//        Six six = new Six();
+//        Seven seven = new Seven();
+        Eight eight = new Eight();
     }
 }
