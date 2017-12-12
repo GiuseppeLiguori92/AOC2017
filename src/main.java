@@ -10,6 +10,7 @@ public class main {
 //        Five five = new Five();
 //        Six six = new Six();
 //        Seven seven = new Seven();
-        Eight eight = new Eight();
+//        Eight eight = new Eight();
+        Nine nine = new Nine();
     }
 }
