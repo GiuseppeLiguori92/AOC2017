@@ -12,6 +12,7 @@ public class main {
 //        Seven seven = new Seven();
 //        Eight eight = new Eight();
 //        Nine nine = new Nine();
-        Ten ten = new Ten();
+//        Ten ten = new Ten();
+        Eleven eleven = new Eleven();
     }
 }
