@@ -1,7 +1,4 @@
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by giuseppeliguori on 09/12/2017.
@@ -2016,45 +2013,50 @@ public class Twelve {
             "4 <-> 2, 3, 6\n" +
             "5 <-> 6\n" +
             "6 <-> 4, 5";
+    private List<Integer> outsiders = new ArrayList<>();
 
     public Twelve() {
-        partOne(input.replace(" ", ""));
+        String input = this.input;
+
+        partOne(input.replace(" ", ""), 0, communicatorPipesWithZero);
         for (int i = 0; i < communicatorPipesWithZero.size(); i++) {
-            partOne(input.replace(" ", ""));
+            partOne(input.replace(" ", ""), 0, communicatorPipesWithZero);
         }
 
-        System.out.println("Twelve.Twelve: " + (communicatorPipesWithZero.size()-175+1));
+        System.out.println("Twelve.Twelve: " + (communicatorPipesWithZero.size() - 175 + 1));
+
+        partTwo(input);
     }
 
-    HashMap<Integer, Boolean> communicatorPipesWithZero = new HashMap<>();
+    HashMap<Integer, Integer> communicatorPipesWithZero = new HashMap<>();
 
-    public void partOne(final String input) {
-        communicatorPipesWithZero.put(0, true);
+    public void partOne(final String input, int lookingForPipe, HashMap<Integer, Integer> hashMap) {
+        hashMap.put(lookingForPipe, lookingForPipe);
         (Arrays.asList(input.split("\\n"))).forEach(
                 line -> {
                     String[] values = line.split("<->");
                     int pipe = Integer.valueOf(values[0]);
 
-                    if (communicatorPipesWithZero.get(pipe) == null) {
-                        communicatorPipesWithZero.put(pipe, false);
+                    if (hashMap.get(pipe) == null) {
+                        hashMap.put(pipe, -1);
                     }
 
-                    boolean pipeCommunicateWithZero = communicatorPipesWithZero.get(pipe);
+                    Integer pipeCommunicateWithZero = hashMap.get(pipe);
 
                     String[] otherPipesString = values[1].split(",");
                     int[] pipes = new int[otherPipesString.length];
                     for (int i = 0; i < pipes.length; i++) {
                         pipes[i] = Integer.valueOf(otherPipesString[i]);
-                        if (communicatorPipesWithZero.get(pipes[i]) == null) {
-                            communicatorPipesWithZero.put(pipes[i], false);
+                        if (hashMap.get(pipes[i]) == null) {
+                            hashMap.put(pipes[i], -1);
                         }
 
-                        if (pipeCommunicateWithZero) {
-                            communicatorPipesWithZero.replace(pipes[i], true);
+                        if (pipeCommunicateWithZero == lookingForPipe) {
+                            hashMap.replace(pipes[i], lookingForPipe);
                         }
 
-                        if (communicatorPipesWithZero.get(pipes[i])) {
-                            communicatorPipesWithZero.replace(pipes[i], true);
+                        if (hashMap.get(pipes[i]) == lookingForPipe) {
+                            hashMap.replace(pipes[i], lookingForPipe);
                         }
                     }
                 }
@@ -2062,11 +2064,11 @@ public class Twelve {
 
 
         int communicators = 0;
-        Iterator iterator = communicatorPipesWithZero.entrySet().iterator();
+        Iterator iterator = hashMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry) iterator.next();
-            Boolean communicateWithZero = (Boolean) entry.getValue();
-            if (communicateWithZero) {
+            Integer communicateWithZero = (Integer) entry.getValue();
+            if (communicateWithZero == lookingForPipe) {
                 communicators++;
             }
 //            System.out.print("Twelve.partOne: " + entry.getKey());
@@ -2077,6 +2079,53 @@ public class Twelve {
     }
 
     public void partTwo(String input) {
+        int groups = 1;
 
+        boolean isEmpty = false;
+        while (!isEmpty) {
+            int lookFor = -1;
+            Iterator iterator = communicatorPipesWithZero.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                Integer communicateWithZero = (Integer) entry.getValue();
+                if (communicateWithZero == -1) {
+                    lookFor = (int) entry.getKey();
+                    groups++;
+                    isEmpty = false;
+                    break;
+                }
+
+                isEmpty = true;
+            }
+
+            if (!isEmpty) {
+                System.out.println("Twelve.partTwo: " + lookFor);
+
+                partOne(input.replace(" ", ""), lookFor, communicatorPipesWithZero);
+                for (int i = 0; i < communicatorPipesWithZero.size(); i++) {
+                    partOne(input.replace(" ", ""), lookFor, communicatorPipesWithZero);
+                }
+            }
+        }
+
+
+        System.out.println("Twelve.partTwo: " + groups);
+
+//        while (true) {
+//
+//
+//            int value = outsiders.get(0);
+//            outsiders.remove(0);
+//            partOne(input.replace(" ", ""), value, communicatorPipesWithZero);
+//            for (int i = 0; i < communicatorPipesWithZero.size(); i++) {
+//                partOne(input.replace(" ", ""), value, communicatorPipesWithZero);
+//            }
+//
+//            for (int i = 0; i < outsiders.size(); i++) {
+//                if (communicatorPipesWithZero.get(outsiders.get(i))) {
+//                    outsiders.remove(i);
+//                }
+//            }
+//        }
     }
 }
