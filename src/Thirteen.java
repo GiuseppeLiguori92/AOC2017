@@ -10,11 +10,55 @@ public class Thirteen {
             "1: 2\n" +
             "4: 4\n" +
             "6: 4";
-    String input = "";
+
+    String input = "0: 5\n" +
+            "1: 2\n" +
+            "2: 3\n" +
+            "4: 4\n" +
+            "6: 6\n" +
+            "8: 4\n" +
+            "10: 8\n" +
+            "12: 6\n" +
+            "14: 6\n" +
+            "16: 14\n" +
+            "18: 6\n" +
+            "20: 8\n" +
+            "22: 8\n" +
+            "24: 10\n" +
+            "26: 8\n" +
+            "28: 8\n" +
+            "30: 10\n" +
+            "32: 8\n" +
+            "34: 12\n" +
+            "36: 9\n" +
+            "38: 20\n" +
+            "40: 12\n" +
+            "42: 12\n" +
+            "44: 12\n" +
+            "46: 12\n" +
+            "48: 12\n" +
+            "50: 12\n" +
+            "52: 12\n" +
+            "54: 12\n" +
+            "56: 14\n" +
+            "58: 14\n" +
+            "60: 14\n" +
+            "62: 20\n" +
+            "64: 14\n" +
+            "66: 14\n" +
+            "70: 14\n" +
+            "72: 14\n" +
+            "74: 14\n" +
+            "76: 14\n" +
+            "78: 14\n" +
+            "80: 12\n" +
+            "90: 30\n" +
+            "92: 17\n" +
+            "94: 18";
 
     public Thirteen() {
 //        partOne(input);
-        partOne(inputTest);
+        partOne(input);
 //        partTwo(inputeTest1);
     }
 
@@ -41,22 +85,27 @@ public class Thirteen {
                     int index = Integer.parseInt(line.split(":")[0]);
                     int depth = Integer.parseInt(line.split(":")[1]);
                     if (index != currentIndex) {
-                        for (int i = 0; i < (index - currentIndex); i++) {
-                            firewall.add(currentIndex++, new FirewallLine(new Character[0], -1, true));
+                        int remain = index-currentIndex;
+                        for (int i = 0; i < remain; i++) {
+                            firewall.add(new FirewallLine(new Character[0], -1, true));
                         }
                     }
 
-                    firewall.add(currentIndex++, new FirewallLine(new Character[depth], -1, true));
+                    firewall.add(new FirewallLine(new Character[depth], -1, true));
+                    currentIndex = index+1;
                 }
         );
 
         resetFirewall();
 
-        for (int picosecond = 0; picosecond < 8; picosecond++) {
+        int severity = 0;
+        for (int picosecond = 0; picosecond < firewall.size(); picosecond++) {
             for (int i = 0; i < firewall.size(); i++) {
                 FirewallLine firewallLine = firewall.get(i);
+
                 if (firewallLine.line.length > 0) {
                     int index = firewallLine.index;
+
                     if (firewallLine.verse) {
                         index += 1;
                         if (index == firewallLine.line.length - 1) {
@@ -70,11 +119,19 @@ public class Thirteen {
                     }
                     firewallLine.index = index;
                     firewallLine.line[index] = 'S';
+
+                    if (i == picosecond) {
+                        if (firewallLine.index == 0) {
+                            severity += (i * firewallLine.line.length);
+                        }
+                    }
                 }
             }
             printFirewall();
             resetFirewall();
         }
+
+        System.out.println("Thirteen.partOne: " + severity);
     }
 
     private void printFirewall() {
