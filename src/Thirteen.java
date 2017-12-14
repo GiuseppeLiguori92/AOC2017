@@ -19,7 +19,20 @@ public class Thirteen {
     }
 
     int currentIndex = 0;
-    List<Character[]> firewall = new ArrayList<>();
+
+    List<FirewallLine> firewall = new ArrayList<>();
+
+    public class FirewallLine {
+        Character[] line;
+        int index;
+        boolean verse;
+
+        public FirewallLine(Character[] line, int index, boolean verse) {
+            this.line = line;
+            this.index = index;
+            this.verse = verse;
+        }
+    }
 
     public void partOne(String input) {
         (Arrays.asList(input.split("\\n"))).forEach(
@@ -29,11 +42,11 @@ public class Thirteen {
                     int depth = Integer.parseInt(line.split(":")[1]);
                     if (index != currentIndex) {
                         for (int i = 0; i < (index - currentIndex); i++) {
-                            firewall.add(currentIndex++, new Character[0]);
+                            firewall.add(currentIndex++, new FirewallLine(new Character[0], -1, true));
                         }
                     }
 
-                    firewall.add(currentIndex++, new Character[depth]);
+                    firewall.add(currentIndex++, new FirewallLine(new Character[depth], -1, true));
                 }
         );
 
@@ -41,15 +54,22 @@ public class Thirteen {
 
         for (int picosecond = 0; picosecond < 8; picosecond++) {
             for (int i = 0; i < firewall.size(); i++) {
-                Character[] firewalLine = firewall.get(i);
-                if (firewalLine.length > 0) {
-                    int val = (picosecond / firewalLine.length );
-                    boolean direction = val % 2 == 0;
-                    int value = (picosecond % firewalLine.length);
-                    int index = direction ?
-                            value : (firewalLine.length-value-1-1);
-                    firewalLine[index] = 'S';
-                    System.out.println(" " + direction + " " + val + " " + value + " " + index);
+                FirewallLine firewallLine = firewall.get(i);
+                if (firewallLine.line.length > 0) {
+                    int index = firewallLine.index;
+                    if (firewallLine.verse) {
+                        index += 1;
+                        if (index == firewallLine.line.length - 1) {
+                            firewallLine.verse = !firewallLine.verse;
+                        }
+                    } else {
+                        index -= 1;
+                        if (index == 0) {
+                            firewallLine.verse = !firewallLine.verse;
+                        }
+                    }
+                    firewallLine.index = index;
+                    firewallLine.line[index] = 'S';
                 }
             }
             printFirewall();
@@ -59,10 +79,10 @@ public class Thirteen {
 
     private void printFirewall() {
         for (int i = 0; i < firewall.size(); i++) {
-            Character[] firewalLine = firewall.get(i);
+            FirewallLine firewalLine = firewall.get(i);
             System.out.print(i + " ");
-            for (int j = 0; j < firewalLine.length; j++) {
-                System.out.print("[" + firewalLine[j] + "]");
+            for (int j = 0; j < firewalLine.line.length; j++) {
+                System.out.print("[" + firewalLine.line[j] + "]");
             }
             System.out.println(" ");
         }
@@ -72,9 +92,9 @@ public class Thirteen {
 
     private void resetFirewall() {
         for (int i = 0; i < firewall.size(); i++) {
-            Character[] firewalLine = firewall.get(i);
-            for (int j = 0; j < firewalLine.length; j++) {
-                firewalLine[j] = ' ';
+            FirewallLine firewalLine = firewall.get(i);
+            for (int j = 0; j < firewalLine.line.length; j++) {
+                firewalLine.line[j] = ' ';
             }
         }
     }
