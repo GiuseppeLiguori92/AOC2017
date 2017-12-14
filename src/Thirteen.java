@@ -58,8 +58,8 @@ public class Thirteen {
 
     public Thirteen() {
 //        partOne(input);
-        partOne(input);
-//        partTwo(inputeTest1);
+//        partOne(input);
+        partTwo(input);
     }
 
     int currentIndex = 0;
@@ -85,14 +85,14 @@ public class Thirteen {
                     int index = Integer.parseInt(line.split(":")[0]);
                     int depth = Integer.parseInt(line.split(":")[1]);
                     if (index != currentIndex) {
-                        int remain = index-currentIndex;
+                        int remain = index - currentIndex;
                         for (int i = 0; i < remain; i++) {
                             firewall.add(new FirewallLine(new Character[0], -1, true));
                         }
                     }
 
                     firewall.add(new FirewallLine(new Character[depth], -1, true));
-                    currentIndex = index+1;
+                    currentIndex = index + 1;
                 }
         );
 
@@ -157,6 +157,61 @@ public class Thirteen {
     }
 
     public void partTwo(String input) {
+        (Arrays.asList(input.split("\\n"))).forEach(
+                line -> {
+                    line = line.replace(" ", "");
+                    int index = Integer.parseInt(line.split(":")[0]);
+                    int depth = Integer.parseInt(line.split(":")[1]);
+                    if (index != currentIndex) {
+                        int remain = index - currentIndex;
+                        for (int i = 0; i < remain; i++) {
+                            firewall.add(new FirewallLine(new Character[0], -1, true));
+                        }
+                    }
 
+                    firewall.add(new FirewallLine(new Character[depth], -1, true));
+                    currentIndex = index + 1;
+                }
+        );
+
+        resetFirewall();
+
+        int delay = 0;
+        int picosecond = 0;
+        while ( (picosecond-delay) < firewall.size()) {
+            for (int i = 0; i < firewall.size(); i++) {
+                FirewallLine firewallLine = firewall.get(i);
+
+                if (firewallLine.line.length > 0) {
+                    int index = firewallLine.index;
+
+                    if (firewallLine.verse) {
+                        index += 1;
+                        if (index == firewallLine.line.length - 1) {
+                            firewallLine.verse = !firewallLine.verse;
+                        }
+                    } else {
+                        index -= 1;
+                        if (index == 0) {
+                            firewallLine.verse = !firewallLine.verse;
+                        }
+                    }
+                    firewallLine.index = index;
+                    firewallLine.line[index] = 'S';
+
+                    if (i == picosecond-delay) {
+                        if (firewallLine.index == 0) {
+                            delay++;
+                        }
+                    }
+                }
+            }
+            picosecond++;
+
+            printFirewall();
+            resetFirewall();
+        }
+
+        System.out.println("Thirteen.partTwo: " + (picosecond));
     }
 }
