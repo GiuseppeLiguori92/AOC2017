@@ -59,7 +59,94 @@ public class Thirteen {
     public Thirteen() {
 //        partOne(input);
 //        partOne(input);
-        partTwo(input);
+//        partTwo(input);
+        try {
+            partTwo2(input);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void partTwo2(String input) throws InterruptedException {
+        (Arrays.asList(input.split("\\n"))).forEach(
+                line -> {
+                    line = line.replace(" ", "");
+                    int index = Integer.parseInt(line.split(":")[0]);
+                    int depth = Integer.parseInt(line.split(":")[1]);
+                    if (index != currentIndex) {
+                        int remain = index - currentIndex;
+                        for (int i = 0; i < remain; i++) {
+                            firewall.add(new FirewallLine(new Character[0], -1, true));
+                        }
+                    }
+
+                    firewall.add(new FirewallLine(new Character[depth], -1, true));
+                    currentIndex = index + 1;
+                }
+        );
+
+        resetFirewall();
+
+        int severity = 0;
+        int delay = 0;
+        int myposition = -1;
+        while (true) {
+            for (int picosecond = 0; picosecond < firewall.size() + delay; picosecond++) {
+                for (int i = 0; i < firewall.size(); i++) {
+                    FirewallLine firewallLine = firewall.get(i);
+
+                    if (firewallLine.line.length > 0) {
+                        int index = firewallLine.index;
+
+                        if (firewallLine.verse) {
+                            index += 1;
+                            if (index == firewallLine.line.length - 1) {
+                                firewallLine.verse = !firewallLine.verse;
+                            }
+                        } else {
+                            index -= 1;
+                            if (index == 0) {
+                                firewallLine.verse = !firewallLine.verse;
+                            }
+                        }
+                        firewallLine.index = index;
+                        firewallLine.line[index] = 'S';
+
+                        if (picosecond >= delay) {
+                            myposition = picosecond - delay;
+//                            System.out.println("Thirteen.partTwo2 Position: " + (picosecond - delay) + " " + i);
+                            if (picosecond == delay) {
+//                                System.out.println("Thirteen.partTwo2: START NOW**");
+                            }
+                            if (i == picosecond - delay) {
+                                if (firewallLine.index == 0) {
+                                    System.out.println("Thirteen.partTwo2 COUGHT: " + i);
+                                    severity += (i * firewallLine.line.length);
+                                    System.out.println("Thirteen.partTwo2 severity: " + severity);
+                                    if (severity != 0) {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+//                System.out.println("Thirteen.partTwo2: " + picosecond);
+//                printFirewall(myposition);
+                resetFirewall();
+            }
+
+            System.out.println("Thirteen.partOne: ****" + severity + " " + (firewall.size() + delay - 1));
+            if (severity == 0) {
+                break;
+            }
+            delay++;
+            severity = 0;
+            myposition = -1;
+            hardResetFirewall();
+        }
+
     }
 
     int currentIndex = 0;
@@ -147,6 +234,43 @@ public class Thirteen {
         System.out.println(" ");
     }
 
+    private void printFirewall(int myposition) {
+        for (int i = 0; i < firewall.size(); i++) {
+            FirewallLine firewalLine = firewall.get(i);
+            System.out.print(i + " ");
+            for (int j = 0; j < firewalLine.line.length; j++) {
+                if (myposition != -1) {
+                    if (myposition == i && j == 0) {
+                        System.out.print("[(" + firewalLine.line[j] + ")]");
+                    } else {
+                        System.out.print("[" + firewalLine.line[j] + "]");
+                    }
+                } else {
+                    System.out.print("[" + firewalLine.line[j] + "]");
+                }
+
+            }
+            if (firewalLine.line.length == 0 && myposition == i) {
+                System.out.print("( )");
+            }
+            System.out.println(" ");
+        }
+
+        System.out.println(" ");
+    }
+
+
+    private void hardResetFirewall() {
+        for (int i = 0; i < firewall.size(); i++) {
+            FirewallLine firewalLine = firewall.get(i);
+            for (int j = 0; j < firewalLine.line.length; j++) {
+                firewalLine.line[j] = ' ';
+            }
+            firewalLine.index = -1;
+            firewalLine.verse = true;
+        }
+    }
+
     private void resetFirewall() {
         for (int i = 0; i < firewall.size(); i++) {
             FirewallLine firewalLine = firewall.get(i);
@@ -178,7 +302,7 @@ public class Thirteen {
 
         int delay = 0;
         int picosecond = 0;
-        while ( (picosecond-delay) < firewall.size()) {
+        while ((picosecond - delay) < firewall.size()) {
             for (int i = 0; i < firewall.size(); i++) {
                 FirewallLine firewallLine = firewall.get(i);
 
@@ -199,7 +323,7 @@ public class Thirteen {
                     firewallLine.index = index;
                     firewallLine.line[index] = 'S';
 
-                    if (i == picosecond-delay) {
+                    if (i == picosecond - delay) {
                         if (firewallLine.index == 0) {
                             delay++;
                         }
