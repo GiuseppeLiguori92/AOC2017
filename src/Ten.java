@@ -5,11 +5,11 @@ public class Ten {
     int input[] = new int[]{212, 254, 178, 237, 2, 0, 1, 54, 167, 92, 117, 125, 255, 61, 159, 164};
     int inputTest[] = new int[]{3, 4, 1, 5};
 
-    int[] input2 = new int[]{50, 49, 50, 44, 50, 53, 52, 44, 49, 55, 56, 44, 50, 51, 55, 44, 50, 44, 48, 44, 49, 44, 53, 52, 44, 49, 54, 55, 44, 57, 50, 44, 49, 49, 55, 44, 49, 50, 53, 44, 50, 53, 53, 44, 54, 49, 44, 49, 53, 57, 44, 49, 54, 52, 17, 31, 73, 47, 23};
+    byte[] input2 = new byte[]{50, 49, 50, 44, 50, 53, 52, 44, 49, 55, 56, 44, 50, 51, 55, 44, 50, 44, 48, 44, 49, 44, 53, 52, 44, 49, 54, 55, 44, 57, 50, 44, 49, 49, 55, 44, 49, 50, 53, 44, 50, 53, 53, 44, 54, 49, 44, 49, 53, 57, 44, 49, 54, 52, 17, 31, 73, 47, 23};
 
     public Ten() {
-        partOne(input);
-        partTwo(input2);
+//        partOne(input);
+//        partTwo(input2);
     }
 
     public void partOne(int[] input) {
@@ -77,13 +77,13 @@ public class Ten {
         System.out.println("Ten.partOne: " + (array[0] * array[1]));
     }
 
-    public void partTwo(int[] input) {
+    public String partTwo(byte[] input) {
         int[] array = new int[256];
         for (int i = 0; i < array.length; i++) {
             array[i] = i;
         }
 
-        printArray(array);
+//        printArray(array);
 
         int skip = 0;
         int selectedIndex = 0;
@@ -135,7 +135,7 @@ public class Ten {
 
                 skip++;
 
-                printArray(array);
+//                printArray(array);
             }
         }
 
@@ -152,7 +152,7 @@ public class Ten {
             }
         }
 
-        printArray2(dash);
+//        printArray2(dash);
 
 //        dash[0] = 64;
 //        dash[1] = 7;
@@ -161,8 +161,8 @@ public class Ten {
         for (int i = 0; i < dash.length; i++) {
             hex += String.format("%02X", dash[i] & 0xFF);
         }
-        System.out.println("Ten.partTwo: " + hex);
-
+//        System.out.println("Ten.partTwo: " + hex);
+        return hex;
     }
 
     private void printArray(int[] array) {

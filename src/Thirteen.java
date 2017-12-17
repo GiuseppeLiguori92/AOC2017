@@ -60,14 +60,10 @@ public class Thirteen {
 //        partOne(input);
 //        partOne(input);
 //        partTwo(input);
-        try {
-            partTwo2(input);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        partTwo2(input);
     }
 
-    private void partTwo2(String input) throws InterruptedException {
+    private void partTwo2(String input) {
         (Arrays.asList(input.split("\\n"))).forEach(
                 line -> {
                     line = line.replace(" ", "");
@@ -88,7 +84,7 @@ public class Thirteen {
         resetFirewall();
 
         int severity = 0;
-        int delay = 0;
+        int delay = 3941459;
         int myposition = -1;
         while (true) {
             for (int picosecond = 0; picosecond < firewall.size() + delay; picosecond++) {
@@ -124,6 +120,7 @@ public class Thirteen {
                                     severity += (i * firewallLine.line.length);
                                     System.out.println("Thirteen.partTwo2 severity: " + severity);
                                     if (severity != 0) {
+                                        picosecond = firewall.size() + delay;
                                         break;
                                     }
                                 }
@@ -137,7 +134,7 @@ public class Thirteen {
                 resetFirewall();
             }
 
-            System.out.println("Thirteen.partOne: ****" + severity + " " + (firewall.size() + delay - 1));
+            System.out.println("Thirteen.partOne: ****" + severity + " " + delay);
             if (severity == 0) {
                 break;
             }
