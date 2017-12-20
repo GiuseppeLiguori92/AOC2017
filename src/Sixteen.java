@@ -19,10 +19,12 @@ public class Sixteen {
 
         printArray(list);
 
-        partOne(input, list,1000000000);
+//        partOne(input, list, 1);
+        partOne(input, list, 1000000000);
         partTwo(input);
     }
-//kpfonjglcibaedhm
+
+    //kpfonjglcibaedhm
     private void printArray(List<Character> list) {
         for (int i = 0; i < list.size(); i++) {
             System.out.print("" + list.get(i));
@@ -30,46 +32,84 @@ public class Sixteen {
         System.out.println(" ");
     }
 
+    private static class Operation {
+
+        public enum Type {
+            SPIN,
+            EXCHANGE,
+            PARTNER;
+        }
+
+        String operation;
+        List<Character> list;
+        Type type;
+        int n1, n2;
+
+        public Operation(String operation, List<Character> list) {
+            this.operation = operation;
+            this.list = list;
+            if (operation.startsWith("s")) {
+                type = Type.SPIN;
+            } else if (operation.startsWith("x")) {
+                type = Type.EXCHANGE;
+            } else if (operation.startsWith("p")) {
+                type = Type.PARTNER;
+            }
+        }
+
+        public void run() {
+            switch (type) {
+                case SPIN:
+                    n1 = Integer.parseInt(operation.split("s")[1]);
+                    spin(list, n1);
+                    break;
+                case EXCHANGE:
+                    n1 = Integer.parseInt(operation.replace("x", "").split("/")[0]);
+                    n2 = Integer.parseInt(operation.replace("x", "").split("/")[1]);
+                    exchange(list, n1, n2);
+                    break;
+                case PARTNER:
+                    Character c1 = (operation.substring(1).split("/")[0]).charAt(0);
+                    Character c2 = (operation.substring(1).split("/")[1]).charAt(0);
+                    n1 = list.indexOf(c1);
+                    n2 = list.indexOf(c2);
+                    exchange(list, n1, n2);
+                    break;
+            }
+        }
+
+        private void exchange(List<Character> list, int n1, int n2) {
+            Character c1 = list.get(n1);
+            Character c2 = list.get(n2);
+            list.remove(n1);
+            list.add(n1, c2);
+            list.remove(n2);
+            list.add(n2, c1);
+        }
+
+        private void spin(List<Character> list, int n) {
+            List<Character> subList = new ArrayList<>(list.subList(list.size() - n, list.size()));
+            for (int i = 0; i < n; i++) {
+                list.remove(list.size() - 1);
+                list.add(0, subList.get(subList.size() - 1 - i));
+            }
+        }
+    }
+
     public void partOne(String input, List<Character> list, int cycles) {
+        List<Operation> operations = new ArrayList<>();
+        (Arrays.asList(input.split(","))).forEach(
+                operation -> {
+                    operations.add(new Operation(operation, list));
+                }
+        );
         for (int i = 0; i < cycles; i++) {
-            System.out.print("Sixteen.partOne: [ " + i + " ] ");
-            (Arrays.asList(input.split(","))).forEach(
-                    operation -> {
-                        if (operation.startsWith("s")) {
-                            int n = Integer.parseInt(operation.split("s")[1]);
-                            spin(list, n);
-                        } else if (operation.startsWith("x")) {
-                            int n1 = Integer.parseInt(operation.replace("x", "").split("/")[0]);
-                            int n2 = Integer.parseInt(operation.replace("x", "").split("/")[1]);
-                            exchange(list, n1, n2);
-                        } else if (operation.startsWith("p")) {
-                            Character c1 = (operation.substring(1).split("/")[0]).charAt(0);
-                            Character c2 = (operation.substring(1).split("/")[1]).charAt(0);
-                            int n1 = list.indexOf(c1);
-                            int n2 = list.indexOf(c2);
-                            exchange(list, n1, n2);
-                        }
-                    }
-            );
-            printArray(list);
+            System.out.println("Sixteen.partOne: " + i);
+            operations.forEach(operation -> {
+                operation.run();
+            });
         }
-    }
-
-    private void exchange(List<Character> list, int n1, int n2) {
-        Character c1 = list.get(n1);
-        Character c2 = list.get(n2);
-        list.remove(n1);
-        list.add(n1, c2);
-        list.remove(n2);
-        list.add(n2, c1);
-    }
-
-    private void spin(List<Character> list, int n) {
-        List<Character> subList = new ArrayList<>(list.subList(list.size() - n, list.size()));
-        for (int i = 0; i < n; i++) {
-            list.remove(list.size() - 1);
-            list.add(0, subList.get(subList.size() - 1 - i));
-        }
+        printArray(list);
     }
 
     public void partTwo(String input) {
