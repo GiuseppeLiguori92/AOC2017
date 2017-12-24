@@ -211,13 +211,15 @@ public class Nineteen {
     String inputTest = "     |          \n" +
             "     |  +--+    \n" +
             "     A  |  C    \n" +
-            " F---|----E|--+ \n" +
+            "-F---|----E|--+ \n" +
             "     |  |  |  D \n" +
             "     +B-+  +--+ \n";
     private int rows, cols;
+    private String string = "";
+    char[][] matrix = null;
 
     public Nineteen() {
-        partOne(inputTest);
+        partOne(input);
     }
 
     private void partOne(String inputTest) {
@@ -234,7 +236,7 @@ public class Nineteen {
 
         cols = lines.get(0).length();
         rows = lines.size();
-        char matrix[][] = new char[rows][cols];
+        matrix = new char[rows][cols];
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 char character = lines.get(r).charAt(c);
@@ -246,64 +248,80 @@ public class Nineteen {
             }
         }
 
-        findNextValue(matrix, currentRow, currentCol, true, true, "", ' ');
+        currentRow = 153;
+        currentCol = 134;
+        findNextValue(currentRow, currentCol, true, true, '-');
+//        findNextValue(currentRow, currentCol, true, true, ' ');
+        System.out.println("Nineteen.partOne: " + string);
     }
 
-    private void findNextValue(char[][] matrix, int currentRow, int currentCol, boolean goDown, boolean goRight, String string, char previousChar) {
-        printMatrix(matrix, rows, cols, currentRow, currentCol);
+    private void findNextValue(int currentRow, int currentCol, boolean goDown, boolean goRight, char previousChar) {
+//
+//        boolean found = false;
+//
+//
+//        while (!found) {
+//            System.out.println("Nineteen.findNextValue");
+//        }
+
+        //printMatrix(matrix, rows, cols, currentRow, currentCol);
+        System.out.println("string: "+ string + " matrix = [" + matrix + "], currentRow = [" + currentRow + "], currentCol = [" + currentCol + "], goDown = [" + goDown + "], goRight = [" + goRight + "], previousChar = [" + previousChar + "]");
         char c = matrix[currentRow][currentCol];
-        if (c == '|') {
+        if (c == '|' && currentRow + (goDown ? +1 : -1) >= 0 && currentRow + (goDown ? +1 : -1) < rows) {
             if (matrix[currentRow + (goDown ? +1 : -1)][currentCol] == '-') {
-                findNextValue(matrix, currentRow + (goDown ? +2 : -2), currentCol, goDown, goRight, string, c);
+                findNextValue(currentRow + (goDown ? +2 : -2), currentCol, goDown, goRight, c);
+            } else {
+                findNextValue(currentRow + (goDown ? +1 : -1), currentCol, goDown, goRight, c);
             }
-            findNextValue(matrix, currentRow + (goDown ? +1 : -1), currentCol, goDown, goRight, string, c);
+        } else if (c == '-' && currentCol + (goRight ? +1 : -1) >= 0 && currentCol + (goRight ? +1 : -1) < cols) {
+            if (matrix[currentRow][currentCol + (goRight ? +1 : -1)] == '|') {
+                findNextValue(currentRow, currentCol + (goRight ? +2 : -2), goDown, goRight, c);
+            } else {
+                findNextValue(currentRow, currentCol + (goRight ? +1 : -1), goDown, goRight, c);
+            }
         } else if (c == '+') {
             if (previousChar == '|') {
-                if (matrix[currentRow][currentCol + 1] == '-') {
-                    findNextValue(matrix, currentRow, currentCol + 1, goDown, true, string, c);
-                } else if (matrix[currentRow][currentCol - 1] == '-') {
-                    findNextValue(matrix, currentRow, currentCol + 1, goDown, false, string, c);
+                if (currentCol + 1 < cols && matrix[currentRow][currentCol + 1] == '-') {
+                    findNextValue(currentRow, currentCol + 1, goDown, true, c);
+                } else if (currentCol - 1 >= 0 && matrix[currentRow][currentCol - 1] == '-') {
+                    findNextValue(currentRow, currentCol - 1, goDown, false, c);
                 } else {
                     // is a letter
-                    if (matrix[currentRow][currentCol + 1] != ' ' &&
-                            matrix[currentRow][currentCol + 1] != '-') {
+                    if (currentCol + 1 < cols && matrix[currentRow][currentCol + 1] != ' ' && matrix[currentRow][currentCol + 1] != '-') {
                         string += matrix[currentRow][currentCol + 1];
-                        findNextValue(matrix, currentRow, currentCol + 2, goDown, true, string, c);
-                    } else if (matrix[currentRow][currentCol - 1] != ' ' &&
-                            matrix[currentRow][currentCol - 1] != '-') {
+                        findNextValue(currentRow, currentCol + 2, goDown, true, '-');
+                    } else if (currentCol - 1 >= 0 && matrix[currentRow][currentCol - 1] != ' ' && matrix[currentRow][currentCol - 1] != '-') {
                         string += matrix[currentRow][currentCol - 1];
-                        findNextValue(matrix, currentRow, currentCol - 2, goDown, false, string, c);
+                        findNextValue(currentRow, currentCol - 2, goDown, false, '-');
                     }
                 }
             } else if (previousChar == '-') {
                 if (currentRow + 1 < rows && matrix[currentRow + 1][currentCol] == '|') {
-                    findNextValue(matrix, currentRow + 1, currentCol, true, true, string, c);
+                    findNextValue(currentRow + 1, currentCol, true, true, c);
                 } else if (currentRow - 1 >= 0 && matrix[currentRow - 1][currentCol] == '|') {
-                    findNextValue(matrix, currentRow - 1, currentCol, false, false, string, c);
+                    findNextValue(currentRow - 1, currentCol, false, false, c);
                 } else {
                     // is a letter
-                    if (currentRow + 1 < rows && matrix[currentRow + 1][currentCol] != ' ' &&
-                            matrix[currentRow + 1][currentCol] != '|') {
+                    if (currentRow + 1 < rows && matrix[currentRow + 1][currentCol] != ' ' && matrix[currentRow + 1][currentCol] != '|') {
                         string += matrix[currentRow + 1][currentCol];
                         System.out.println("Nineteen.findNextValue: " + string);
-                        findNextValue(matrix, currentRow + 2, currentCol, true, true, string, c);
-                    } else if (currentRow - 1 >= 0 && matrix[currentRow - 1][currentCol] != ' ' &&
-                            matrix[currentRow - 1][currentCol] != '|') {
+                        findNextValue(currentRow + 2, currentCol, true, true, '|');
+                    } else if (currentRow - 1 >= 0 && matrix[currentRow - 1][currentCol] != ' ' && matrix[currentRow - 1][currentCol] != '|') {
                         string += matrix[currentRow - 1][currentCol];
                         System.out.println("Nineteen.findNextValue: " + string);
-                        findNextValue(matrix, currentRow - 2, currentCol, false, false, string, c);
+                        findNextValue(currentRow - 2, currentCol, false, false, '|');
                     }
                 }
             }
-        } else if (c == '-') {
-            if (matrix[currentRow][currentCol + (goRight ? +1 : -1)] == '|') {
-                findNextValue(matrix, currentRow, currentCol + (goRight ? +2 : -2), goDown, goRight, string, c);
-            }
-            findNextValue(matrix, currentRow, currentCol + (goRight ? +1 : -1), goDown, goRight, string, c);
         } else {
+            // is a letter
             string += matrix[currentRow][currentCol];
             System.out.println("Nineteen.findNextValue: " + string);
-            findNextValue(matrix, currentRow + 2, currentCol, goDown, goRight, "", c);
+            if (currentCol + (goRight ? +1 : -1) >= 0 && currentCol + (goRight ? +1 : -1) < cols && previousChar == '-' && matrix[currentRow][currentCol + (goRight ? 1 : -1)] != ' ') {
+                findNextValue(currentRow, currentCol + (goRight ? 1 : -1), goDown, goRight, previousChar);
+            } else if (currentRow + (goDown ? +1 : -1) >= 0 && currentRow + (goDown ? +1 : -1) < rows && previousChar == '|' && matrix[currentRow + (goDown ? 1 : -1)][currentCol] != ' ') {
+                findNextValue(currentRow + (goDown ? 1 : -1), currentCol, goDown, goRight, previousChar);
+            }
         }
     }
 
