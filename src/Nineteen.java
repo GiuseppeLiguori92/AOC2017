@@ -1,6 +1,8 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by giuseppeliguori on 23/12/2017.
@@ -211,7 +213,7 @@ public class Nineteen {
     String inputTest = "     |          \n" +
             "     |  +--+    \n" +
             "     A  |  C    \n" +
-            "-F---|----E|--+ \n" +
+            " F---|----E|--+ \n" +
             "     |  |  |  D \n" +
             "     +B-+  +--+ \n";
     private int rows, cols;
@@ -219,7 +221,7 @@ public class Nineteen {
     char[][] matrix = null;
 
     public Nineteen() {
-        partOne(input);
+        partOne(inputTest);
     }
 
     private void partOne(String inputTest) {
@@ -248,9 +250,98 @@ public class Nineteen {
             }
         }
 
-        currentRow = 153;
-        currentCol = 134;
-        findNextValue(currentRow, currentCol, true, true, '-');
+        boolean found = false;
+        boolean goDown = true;
+        boolean goRight = true;
+        boolean goingVertically = true;
+        String pattern = "[A-Za-z]";
+        while (!found) {
+            char selectedChar = matrix[currentRow][currentCol];
+            if (selectedChar == '|') {
+                if (goDown) {
+                    currentRow += 1;
+                    if (Pattern.matches(pattern, "" + matrix[currentRow][currentCol])) {
+                        string += matrix[currentRow][currentCol];
+                        currentRow += 1;
+                    } else if (matrix[currentRow][currentCol] == '-') {
+                        currentRow += 1;
+                    }
+                } else {
+                    currentRow -= 1;
+                    if (Pattern.matches(pattern, "" + matrix[currentRow][currentCol])) {
+                        string += matrix[currentRow][currentCol];
+                        currentRow -= 1;
+                    } else if (matrix[currentRow][currentCol] == '-') {
+                        currentRow -= 1;
+                    }
+                }
+                goingVertically = true;
+            } else if (selectedChar == '-') {
+                if (goRight) {
+                    currentCol += 1;
+                    if (Pattern.matches(pattern, "" + matrix[currentRow][currentCol])) {
+                        string += matrix[currentRow][currentCol];
+                        currentCol += 1;
+                    } else if (matrix[currentRow][currentCol] == '|') {
+                        currentCol += 1;
+                    }
+                } else {
+                    currentCol -= 1;
+                    if (Pattern.matches(pattern, "" + matrix[currentRow][currentCol])) {
+                        string += matrix[currentRow][currentCol];
+                        currentCol -= 1;
+                    } else if (matrix[currentRow][currentCol] == '|') {
+                        currentCol -= 1;
+                    }
+                }
+                goingVertically = false;
+            } else if (selectedChar == '+') {
+                goingVertically = !goingVertically;
+                if (goingVertically) {
+                    if (currentRow + 1 < rows &&
+                            matrix[currentRow + 1][currentCol] != '-' &&
+                            matrix[currentRow + 1][currentCol] != ' ') {
+                        currentRow += 1;
+                        goDown = true;
+                    } else if (currentRow - 1 >= 0 &&
+                            matrix[currentRow - 1][currentCol] != '-' &&
+                            matrix[currentRow - 1][currentCol] != ' ') {
+                        currentRow -= 1;
+                        goDown = false;
+                    }
+                } else {
+                    if (currentCol + 1 < cols &&
+                            matrix[currentRow][currentCol + 1] != '|' &&
+                            matrix[currentRow][currentCol + 1] != ' ') {
+                        currentCol += 1;
+                        goRight = true;
+                    } else if (currentCol - 1 >= 0 &&
+                            matrix[currentRow][currentCol - 1] != '|' &&
+                            matrix[currentRow][currentCol - 1] != ' ') {
+                        currentCol -= 1;
+                        goRight = false;
+                    }
+                }
+            } else {
+                string += selectedChar;
+                if (goingVertically) {
+                    currentRow += goDown ? 1 : -1;
+                } else {
+                    currentCol += goRight ? 1 : -1;
+                }
+            }
+
+//            System.out.println("Nineteen.partOne: " + string);
+            printMatrix(matrix, rows, cols, currentRow, currentCol);
+            if (string.contains("MOABE")) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
 //        findNextValue(currentRow, currentCol, true, true, ' ');
         System.out.println("Nineteen.partOne: " + string);
     }
@@ -265,7 +356,7 @@ public class Nineteen {
 //        }
 
         //printMatrix(matrix, rows, cols, currentRow, currentCol);
-        System.out.println("string: "+ string + " matrix = [" + matrix + "], currentRow = [" + currentRow + "], currentCol = [" + currentCol + "], goDown = [" + goDown + "], goRight = [" + goRight + "], previousChar = [" + previousChar + "]");
+        System.out.println("string: " + string + " matrix = [" + matrix + "], currentRow = [" + currentRow + "], currentCol = [" + currentCol + "], goDown = [" + goDown + "], goRight = [" + goRight + "], previousChar = [" + previousChar + "]");
         char c = matrix[currentRow][currentCol];
         if (c == '|' && currentRow + (goDown ? +1 : -1) >= 0 && currentRow + (goDown ? +1 : -1) < rows) {
             if (matrix[currentRow + (goDown ? +1 : -1)][currentCol] == '-') {
@@ -326,14 +417,19 @@ public class Nineteen {
     }
 
     private void printMatrix(char[][] matrix, int rows, int cols, int currentRow, int currentCol) {
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                System.out.print("" + (currentRow == r ? (currentCol == c ? "(" : " ") : (" ")) + matrix[r][c] + (currentRow == r ? (currentCol == c ? ")" : " ") : (" ")));
+        System.out.println(String.format("\033[2J"));
+        for (int r = currentRow - 5; r < currentRow + 5; r++) {
+            for (int c = currentCol - 5; c < currentCol + 5; c++) {
+                try {
+                    System.out.print("" + (currentRow == r ? (currentCol == c ? "(" : " ") : (" ")) + matrix[r][c] + (currentRow == r ? (currentCol == c ? ")" : " ") : (" ")));
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.print(" ");
+                }
             }
             System.out.println(" ");
         }
 
-        System.out.println("************* " + currentRow + " " + currentCol);
+        System.out.println("************* " + currentRow + " " + currentCol + " " + string);
         System.out.println(" ");
     }
 }
